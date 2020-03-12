@@ -13,7 +13,7 @@
 
 ## Overview
 
-The Sensu VictorOps Handler is a [Sensu Handler][6] for sending events to The
+The Sensu VictorOps Handler is a [Sensu Handler][6] for sending events to the
 [VictorOps][11] incident response platform.
 
 ## Files
@@ -50,9 +50,9 @@ Flags:
 
 ### Asset registration
 
-[Sensu Assets][10] are the best way to make use of this plugin. If you're not using an asset, please
-consider doing so! If you're using sensuctl 5.13 with Sensu Backend 5.13 or later, you can use the
-following command to add the asset:
+[Sensu Assets][10] are the best way to make use of this plugin. If you're not
+using an asset, please consider doing so! If you're using sensuctl 5.13 with
+Sensu Backend 5.13 or later, you can use the following command to add the asset:
 
 ```
 sensuctl asset add nixwiz/sensu-victorops-handler
@@ -85,9 +85,10 @@ spec:
 
 ## Installation from source
 
-The preferred way of installing and deploying this plugin is to use it as an Asset. If you would
-like to compile and install the plugin from source or contribute to it, download the latest version
-or create an executable script from this source.
+The preferred way of installing and deploying this plugin is to use it as an
+Asset. If you would like to compile and install the plugin from source or
+contribute to it, download the latest version or create an executable script
+from this source.
 
 From the local path of the sensu-victorops-handler repository:
 
