@@ -1,30 +1,3 @@
-# Handler Plugin Template
-
-## Overview
-handler-plugin-template is a template repository which wraps the [Sensu Plugin SDK][2].
-To use this project as a template, click the "Use this template" button from the main project page.
-Once the repository is created from this template, you can use the [Sensu Plugin Tool][9] to
-populate the templated fields with the proper values.
-
-## Functionality
-
-After successfully creating a project from this template, update the `Config` struct with any
-configuration options for the plugin, map those values as plugin options in the variable `options`,
-and customize the `checkArgs` and `executeHandler` functions in [main.go][7].
-
-When writing or updating a plugin's README from this template, review the Sensu Community
-[plugin README style guide][3] for content suggestions and guidance. Remove everything
-prior to `# Sensu VictorOps Handler` from the generated README file, and add additional context about the
-plugin per the style guide.
-
-## Releases with Github Actions
-
-To release a version of your project, simply tag the target sha with a semver release without a `v`
-prefix (ex. `1.0.0`). This will trigger the [GitHub action][5] workflow to [build and release][4]
-the plugin with goreleaser. Register the asset with [Bonsai][8] to share it with the community!
-
-***
-
 # Sensu VictorOps Handler
 
 ## Table of Contents
@@ -40,11 +13,38 @@ the plugin with goreleaser. Register the asset with [Bonsai][8] to share it with
 
 ## Overview
 
-The Sensu VictorOps Handler is a [Sensu Handler][6] that ...
+The Sensu VictorOps Handler is a [Sensu Handler][6] for sending events to The
+[VictorOps][11] incident response platform.
 
 ## Files
 
+N/A
+
 ## Usage examples
+
+### Help
+
+```The Sensu Go VictorOps handler for sending notifications
+
+Usage:
+  sensu-victorops-handler [flags]
+  sensu-victorops-handler [command]
+
+Available Commands:
+  help        Help about any command
+  version     Print the version number of this plugin
+
+Flags:
+  -a, --api-url string      The URL for the VictorOps API (default "https://alert.victorops.com/integrations/generic/20131114/alert")
+  -h, --help                help for sensu-victorops-handler
+  -r, --routingkey string   The VictorOps Routing Key
+```
+### Environment Variables and Annotations
+
+|Environment Variable|Setting|Annotation|
+|--------------------|-------|----------|
+|SENSU_VICTOROPS_ROUTINGKEY| same as -r / --routingkey|sensu.io/plugins/victorops/config/routingkey|
+|SENSU_VICTOROPS_APIURL|same as -a / --api-url|sensu.io/plugins/victorops/config/api-url|
 
 ## Configuration
 
@@ -58,7 +58,8 @@ following command to add the asset:
 sensuctl asset add nixwiz/sensu-victorops-handler
 ```
 
-If you're using an earlier version of sensuctl, you can find the asset on the [Bonsai Asset Index][https://bonsai.sensu.io/assets/nixwiz/sensu-victorops-handler].
+If you're using an earlier version of sensuctl, you can find the asset on the
+[Bonsai Asset Index][https://bonsai.sensu.io/assets/nixwiz/sensu-victorops-handler].
 
 ### Resource definition
 
@@ -70,10 +71,16 @@ metadata:
   name: sensu-victorops-handler
   namespace: default
 spec:
-  command: sensu-victorops-handler --example example_arg
+  command: sensu-victorops-handler
+  filters:
+  - is_incident
+  - not_silenced
   type: pipe
   runtime_assets:
-  - sensu-victorops-handler
+  - nixwiz/sensu-victorops-handler
+  secrets:
+  - name: SENSU_VICTOROPS_ROUTINGKEY
+    secret: victorops-routingkey
 ```
 
 ## Installation from source
@@ -104,3 +111,4 @@ For more information about contributing to this plugin, see [Contributing][1].
 [8]: https://bonsai.sensu.io/
 [9]: https://github.com/sensu-community/sensu-plugin-tool
 [10]: https://docs.sensu.io/sensu-go/latest/reference/assets/
+[11]: https://victorops.com/
