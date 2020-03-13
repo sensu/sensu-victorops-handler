@@ -1,3 +1,8 @@
+[![Sensu Bonsai Asset](https://img.shields.io/badge/Bonsai-Download%20Me-brightgreen.svg?colorB=89C967&logo=sensu)](https://bonsai.sensu.io/assets/nixwiz/sensu-victorops-handler)
+![Go Test](https://github.com/nixwiz/sensu-victorops-handler/workflows/Go%20Test/badge.svg)
+![goreleaser](https://github.com/nixwiz/sensu-victorops-handler/workflows/goreleaser/badge.svg)
+[![Go Report Card](https://goreportcard.com/badge/github.com/nixwiz/sensu-victorops-handler)](https://goreportcard.com/report/github.com/nixwiz/sensu-victorops-handler)
+
 # Sensu VictorOps Handler
 
 ## Table of Contents
@@ -13,8 +18,16 @@
 
 ## Overview
 
-The Sensu VictorOps Handler is a [Sensu Handler][6] for sending events to the
+The Sensu VictorOps Handler is a [Sensu Go Handler][6] for sending events to the
 [VictorOps][11] incident response platform.
+
+As of the initial version (0.1.x), this is meant to work in the same fashion as
+the prior Ruby based plugin, [sensu-plugins-victorops][12], with the following
+changes:
+- The environment variables for routing key and API URL are now
+SENSU_VICTOROPS_ROUTINGKEY and SENSU_VICTOROPS_APIURL, respectively
+- Since Sensu Go events do not have an action, the RECOVERY message_type is
+based on event.check.status == 0
 
 ## Files
 
@@ -98,6 +111,8 @@ go build
 
 ## Additional notes
 
+N/A
+
 ## Contributing
 
 For more information about contributing to this plugin, see [Contributing][1].
@@ -113,3 +128,4 @@ For more information about contributing to this plugin, see [Contributing][1].
 [9]: https://github.com/sensu-community/sensu-plugin-tool
 [10]: https://docs.sensu.io/sensu-go/latest/reference/assets/
 [11]: https://victorops.com/
+[12]: https://github.com/sensu-plugins/sensu-plugins-victorops

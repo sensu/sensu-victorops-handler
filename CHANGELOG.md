@@ -7,6 +7,13 @@ Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## [0.1.1] - 2020-03-13
+
+### Changed
+- Updated README
+- Removed unnecessary test code
+- Added comments to make golint happy
+
 ## [0.1.0] - 2020-03-12
 
 ### Added

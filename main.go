@@ -53,6 +53,7 @@ var (
 			Keyspace: "sensu.io/plugins/victorops/config",
 		},
 	}
+	// The Sensu Plugin Config Options
 	VictorOpsConfigOptions = []*sensu.PluginConfigOption{
 		{
 			Path:      routingkey,
@@ -82,6 +83,7 @@ func main() {
 
 }
 
+// Function to check that necessary arguments are set
 func CheckArgs(_ *corev2.Event) error {
 
 	if len(config.RoutingKey) == 0 {
@@ -98,6 +100,7 @@ func CheckArgs(_ *corev2.Event) error {
 	return nil
 }
 
+// Function that builds the event message and sends it to VO
 func SendVictorOps(event *corev2.Event) error {
 
 	var msgType string
