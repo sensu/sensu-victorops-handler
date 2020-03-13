@@ -7,6 +7,11 @@ Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## [0.1.2] - 2020-03-13
+
+### Changed
+- Fixed gorelaser config ldflags to properly include version
+
 ## [0.1.1] - 2020-03-13
 
 ### Changed
