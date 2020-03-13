@@ -72,7 +72,7 @@ sensuctl asset add nixwiz/sensu-victorops-handler
 ```
 
 If you're using an earlier version of sensuctl, you can find the asset on the
-[Bonsai Asset Index][https://bonsai.sensu.io/assets/nixwiz/sensu-victorops-handler].
+[Bonsai Asset Index][13].
 
 ### Resource definition
 
@@ -129,3 +129,4 @@ For more information about contributing to this plugin, see [Contributing][1].
 [10]: https://docs.sensu.io/sensu-go/latest/reference/assets/
 [11]: https://victorops.com/
 [12]: https://github.com/sensu-plugins/sensu-plugins-victorops
+[13]: https://bonsai.sensu.io/assets/nixwiz/sensu-victorops-handler
