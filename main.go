@@ -61,6 +61,7 @@ var (
 			Argument:  routingkey,
 			Shorthand: "r",
 			Default:   "",
+			Secret:    true,
 			Usage:     "The VictorOps Routing Key",
 			Value:     &config.RoutingKey,
 		},

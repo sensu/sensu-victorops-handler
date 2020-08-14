@@ -7,6 +7,10 @@ Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+### Changed
+- Updated SDK to 0.8.0
+- Use secrets boolean to avoid exposing routing_key
+
 ## [0.1.2] - 2020-03-13
 
 ### Changed
