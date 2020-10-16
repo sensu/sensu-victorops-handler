@@ -7,6 +7,10 @@ Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+### Changed
+- Updated SDK to 0.8.0
+- Updated module dependencies
+
 ## [0.2.0] - 2020-08-14
 
 ### Changed
