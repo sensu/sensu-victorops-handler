@@ -5,11 +5,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"strings"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/sensu-community/sensu-plugin-sdk/sensu"
+	"github.com/sensu-community/sensu-plugin-sdk/templates"
 	corev2 "github.com/sensu/sensu-go/api/core/v2"
 )
 
@@ -26,26 +28,22 @@ type VOEvent struct {
 	Entity *corev2.Entity `json:"entity,omitempty"`
 }
 
-const (
-	routingkey = "routingkey"
-	apiurl     = "api-url"
-)
+// VOResopnse is the JSON type for a VictorOps response message
+type VOResponse struct {
+	Result   string `json:"result"`
+	EntityID string `json:"entity_id"`
+}
 
 // HandlerConfig is needed for Sensu Go Handlers
 type HandlerConfig struct {
 	sensu.PluginConfig
-	RoutingKey string
-	APIURL     string
+	RoutingKey       string
+	APIURL           string
+	MessageTemplate  string
+	EntityIDTemplate string
 }
 
 var (
-	threadBody           string
-	msgTitle             string
-	msgThreadTitle       string
-	msgThreadExternalURL string
-	msgThreadStatusColor string
-	msgThreadStatusValue string
-
 	config = HandlerConfig{
 		PluginConfig: sensu.PluginConfig{
 			Name:     "sensu-victorops-handler",
@@ -56,9 +54,9 @@ var (
 	// VictorOpsConfigOptions contains the Sensu Plugin Config Options
 	VictorOpsConfigOptions = []*sensu.PluginConfigOption{
 		{
-			Path:      routingkey,
+			Path:      "routingkey",
 			Env:       "SENSU_VICTOROPS_ROUTINGKEY",
-			Argument:  routingkey,
+			Argument:  "routingkey",
 			Shorthand: "r",
 			Default:   "",
 			Secret:    true,
@@ -66,13 +64,31 @@ var (
 			Value:     &config.RoutingKey,
 		},
 		{
-			Path:      apiurl,
+			Path:      "api-url",
 			Env:       "SENSU_VICTOROPS_APIURL",
-			Argument:  apiurl,
+			Argument:  "api-url",
 			Shorthand: "a",
 			Default:   "https://alert.victorops.com/integrations/generic/20131114/alert",
 			Usage:     "The URL for the VictorOps API",
 			Value:     &config.APIURL,
+		},
+		{
+			Path:      "message-template",
+			Env:       "",
+			Argument:  "message-template",
+			Shorthand: "m",
+			Default:   "{{.Entity.Name}:{{.Check.Name}}:{{.Check.Output}}",
+			Usage:     "The template for the message sent to VictorOps",
+			Value:     &config.MessageTemplate,
+		},
+		{
+			Path:      "entity-id-template",
+			Env:       "",
+			Argument:  "entity-id-template",
+			Shorthand: "e",
+			Default:   "{{.Entity.Name}/{{.Check.Name}}",
+			Usage:     "The template for the Entity ID sent to VictorOps",
+			Value:     &config.EntityIDTemplate,
 		},
 	}
 )
@@ -115,8 +131,14 @@ func SendVictorOps(event *corev2.Event) error {
 		msgType = "CRITICAL"
 	}
 
-	msgEntityID := fmt.Sprintf("%s/%s", event.Entity.Name, event.Check.Name)
-	msgStateMessage := fmt.Sprintf("%s:%s:%s", event.Entity.Name, event.Check.Name, event.Check.Output)
+	msgEntityID, err := templates.EvalTemplate("EntityID", config.EntityIDTemplate, event)
+	if err != nil {
+		return fmt.Errorf("Failed to create Entity ID from template: %v", err)
+	}
+	msgStateMessage, err := templates.EvalTemplate("Message", config.MessageTemplate, event)
+	if err != nil {
+		return fmt.Errorf("Failed to create message from template: %v", err)
+	}
 
 	message := VOEvent{
 		MessageType:    msgType,
@@ -144,5 +166,23 @@ func SendVictorOps(event *corev2.Event) error {
 		return fmt.Errorf("POST to %s failed with %v", url, resp.Status)
 	}
 
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("Failed to read response body from %s: %v", config.APIURL, err)
+	}
+
+	voResponse := VOResponse{}
+	err = json.Unmarshal(body, &voResponse)
+	if err != nil {
+		return fmt.Errorf("Failed to unmarshal response from VictorOps: %v", err)
+	}
+
+	// FUTURE: send to AH
+	// VictorOps only sends back a "success" or "failure" message along with the Entity ID
+	fmt.Printf("Submission to VictorOps for Entity ID %s result: %s\n", voResponse.EntityID, voResponse.Result)
+
+	// Should we actually return error if Result above is "failure"?
 	return nil
 }

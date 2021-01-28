@@ -7,14 +7,15 @@
 
 ## Table of Contents
 - [Overview](#overview)
-- [Files](#files)
-- [Usage examples](#usage-examples)
 - [Configuration](#configuration)
   - [Asset registration](#asset-registration)
   - [Resource definition](#resource-definition)
+- [Usage examples](#usage-examples)
+  - [Help output](#help-output)
+  - [Templates](#templates)
+  - [Environment variables](#environment-variables)
+  - [Argument annotations](#argument-annotations)
 - [Installation from source](#installation-from-source)
-- [Additional notes](#additional-notes)
-- [Contributing](#contributing)
 
 ## Overview
 
@@ -28,36 +29,6 @@ changes:
 SENSU_VICTOROPS_ROUTINGKEY and SENSU_VICTOROPS_APIURL, respectively
 - Since Sensu Go events do not have an action, the RECOVERY message_type is
 based on event.check.status == 0
-
-## Files
-
-N/A
-
-## Usage examples
-
-### Help
-
-```The Sensu Go VictorOps handler for sending notifications
-
-Usage:
-  sensu-victorops-handler [flags]
-  sensu-victorops-handler [command]
-
-Available Commands:
-  help        Help about any command
-  version     Print the version number of this plugin
-
-Flags:
-  -a, --api-url string      The URL for the VictorOps API (default "https://alert.victorops.com/integrations/generic/20131114/alert")
-  -h, --help                help for sensu-victorops-handler
-  -r, --routingkey string   The VictorOps Routing Key
-```
-### Environment Variables and Annotations
-
-|Environment Variable|Setting|Annotation|
-|--------------------|-------|----------|
-|SENSU_VICTOROPS_ROUTINGKEY| same as -r / --routingkey|sensu.io/plugins/victorops/config/routingkey|
-|SENSU_VICTOROPS_APIURL|same as -a / --api-url|sensu.io/plugins/victorops/config/api-url|
 
 ## Configuration
 
@@ -93,15 +64,90 @@ spec:
   - nixwiz/sensu-victorops-handler
   secrets:
   - name: SENSU_VICTOROPS_ROUTINGKEY
-    secret: victorops-routingkey
+    secret: victorops_routingkey
+```
+
+## Usage examples
+
+### Help output
+
+```The Sensu Go VictorOps handler for sending notifications
+
+Usage:
+  sensu-victorops-handler [flags]
+  sensu-victorops-handler [command]
+
+Available Commands:
+  help        Help about any command
+  version     Print the version number of this plugin
+
+Flags:
+  -a, --api-url string              The URL for the VictorOps API (default "https://alert.victorops.com/integrations/generic/20131114/alert")
+  -r, --routingkey string           The VictorOps Routing Key
+  -e, --entity-id-template string   The template for the Entity ID sent to VictorOps (default "{{.Entity.Name}/{{.Check.Name}}")
+  -m, --message-template string     The template for the message sent to VictorOps (default "{{.Entity.Name}:{{.Check.Name}}:{{.Check.Output}}")
+  -h, --help                        help for sensu-victorops-handler
+```
+
+### Templates
+
+This handler provides options for using templates to populate the values
+provided by the event in the message sent via SNS. More information on
+template syntax and format can be found in [the documentation][14].
+
+### Environment variables
+
+|Argument     |Environment Variable       |
+|-------------|---------------------------|
+|--routingkey |SENSU_VICTOROPS_ROUTINGKEY |
+|--api-url    |SENSU_VICTOROPS_APIURL     |
+
+**Security Note:** Care should be taken to not expose the routing key for this handler by specifying it
+on the command line or by directly setting the environment variable in the handler definition.  It is
+suggested to make use of [secrets management][17] to surface it as an environment variable.  The
+handler definition above references it as a secret.  Below is an example secrets definition that make
+use of the built-in [env secrets provider][18].
+
+```yml
+---
+type: Secret
+api_version: secrets/v1
+metadata:
+  name: victorops_routingkey
+spec:
+  provider: env
+  id: SENSU_VICTOROPS_ROUTINGKEY
+```
+
+### Argument annotations
+
+All arguments for this handler are tunable on a per entity or check basis based on annotations.  The
+annotations keyspace for this handler is `sensu.io/plugins/victorops/config`.
+
+**NOTE**: Due to [check token substituion][15], supplying a template value such
+as for `message-template` as a check annotation requires that you place the
+desired template as a [golang string literal][16] (enlcosed in backticks)
+within another template definition.  This does not apply to entity annotations.
+
+#### Examples
+
+To change the message template for a particular check, for that check's metadata add the following:
+
+```yml
+type: CheckConfig
+api_version: core/v2
+metadata:
+  annotations:
+    sensu.io/plugins/victorops/config/message-template: "{{`{{.Entity.Name}}/{{.Check.Name}}: {{.Check.State}}, {{.Check.Occurrences}}`}}"
+[...]
 ```
 
 ## Installation from source
 
 The preferred way of installing and deploying this plugin is to use it as an
 Asset. If you would like to compile and install the plugin from source or
-contribute to it, download the latest version or create an executable script
-from this source.
+contribute to it, download the latest version or create an executable from
+this source.
 
 From the local path of the sensu-victorops-handler repository:
 
@@ -109,15 +155,6 @@ From the local path of the sensu-victorops-handler repository:
 go build
 ```
 
-## Additional notes
-
-N/A
-
-## Contributing
-
-For more information about contributing to this plugin, see [Contributing][1].
-
-[1]: https://github.com/sensu/sensu-go/blob/master/CONTRIBUTING.md
 [2]: https://github.com/sensu-community/sensu-plugin-sdk
 [3]: https://github.com/sensu-plugins/community/blob/master/PLUGIN_STYLEGUIDE.md
 [4]: https://github.com/sensu-community/handler-plugin-template/blob/master/.github/workflows/release.yml
@@ -130,3 +167,8 @@ For more information about contributing to this plugin, see [Contributing][1].
 [11]: https://victorops.com/
 [12]: https://github.com/sensu-plugins/sensu-plugins-victorops
 [13]: https://bonsai.sensu.io/assets/nixwiz/sensu-victorops-handler
+[14]: https://docs.sensu.io/sensu-go/latest/observability-pipeline/observe-process/handler-templates/
+[15]: https://docs.sensu.io/sensu-go/latest/observability-pipeline/observe-schedule/checks/#check-token-substitution
+[16]: https://golang.org/ref/spec#String_literals
+[17]: https://docs.sensu.io/sensu-go/latest/guides/secrets-management/
+[18]: https://docs.sensu.io/sensu-go/latest/guides/secrets-management/#use-env-for-secrets-management
