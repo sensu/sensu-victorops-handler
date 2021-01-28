@@ -8,8 +8,18 @@ Versioning](http://semver.org/spec/v2.0.0.html).
 ## Unreleased
 
 ### Changed
-- Updated SDK to 0.8.0
-- Updated module dependencies
+- Updated SDK and other module dependencies
+- Reorganized README
+- Use Go 1.14
+- Code cleanup for linter
+
+### Added
+- Template support for message and entity ID
+- Log output of submission
+- Lint GitHub action
+
+### Removed
+- Windows 386 build from goreleaser
 
 ## [0.2.0] - 2020-08-14
 
