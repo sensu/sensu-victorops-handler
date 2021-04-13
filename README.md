@@ -1,7 +1,7 @@
-[![Sensu Bonsai Asset](https://img.shields.io/badge/Bonsai-Download%20Me-brightgreen.svg?colorB=89C967&logo=sensu)](https://bonsai.sensu.io/assets/nixwiz/sensu-victorops-handler)
-![Go Test](https://github.com/nixwiz/sensu-victorops-handler/workflows/Go%20Test/badge.svg)
-![goreleaser](https://github.com/nixwiz/sensu-victorops-handler/workflows/goreleaser/badge.svg)
-[![Go Report Card](https://goreportcard.com/badge/github.com/nixwiz/sensu-victorops-handler)](https://goreportcard.com/report/github.com/nixwiz/sensu-victorops-handler)
+[![Sensu Bonsai Asset](https://img.shields.io/badge/Bonsai-Download%20Me-brightgreen.svg?colorB=89C967&logo=sensu)](https://bonsai.sensu.io/assets/sensu/sensu-victorops-handler)
+![Go Test](https://github.com/sensu/sensu-victorops-handler/workflows/Go%20Test/badge.svg)
+![goreleaser](https://github.com/sensu/sensu-victorops-handler/workflows/goreleaser/badge.svg)
+[![Go Report Card](https://goreportcard.com/badge/github.com/senssensuu/sensu-victorops-handler)](https://goreportcard.com/report/github.com/sensu/sensu-victorops-handler)
 
 # Sensu VictorOps Handler
 
@@ -39,7 +39,7 @@ using an asset, please consider doing so! If you're using sensuctl 5.13 with
 Sensu Backend 5.13 or later, you can use the following command to add the asset:
 
 ```
-sensuctl asset add nixwiz/sensu-victorops-handler
+sensuctl asset add sensu/sensu-victorops-handler
 ```
 
 If you're using an earlier version of sensuctl, you can find the asset on the
@@ -61,7 +61,7 @@ spec:
   - not_silenced
   type: pipe
   runtime_assets:
-  - nixwiz/sensu-victorops-handler
+  - sensu/sensu-victorops-handler
   secrets:
   - name: SENSU_VICTOROPS_ROUTINGKEY
     secret: victorops_routingkey
@@ -166,7 +166,7 @@ go build
 [10]: https://docs.sensu.io/sensu-go/latest/reference/assets/
 [11]: https://victorops.com/
 [12]: https://github.com/sensu-plugins/sensu-plugins-victorops
-[13]: https://bonsai.sensu.io/assets/nixwiz/sensu-victorops-handler
+[13]: https://bonsai.sensu.io/assets/sensu/sensu-victorops-handler
 [14]: https://docs.sensu.io/sensu-go/latest/observability-pipeline/observe-process/handler-templates/
 [15]: https://docs.sensu.io/sensu-go/latest/observability-pipeline/observe-schedule/checks/#check-token-substitution
 [16]: https://golang.org/ref/spec#String_literals

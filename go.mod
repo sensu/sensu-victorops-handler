@@ -1,4 +1,4 @@
-module github.com/nixwiz/sensu-victorops-handler
+module github.com/sensu/sensu-victorops-handler
 
 go 1.14
 
