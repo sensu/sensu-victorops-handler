@@ -84,8 +84,8 @@ Available Commands:
 Flags:
   -a, --api-url string              The URL for the VictorOps API (default "https://alert.victorops.com/integrations/generic/20131114/alert")
   -r, --routingkey string           The VictorOps Routing Key
-  -e, --entity-id-template string   The template for the Entity ID sent to VictorOps (default "{{.Entity.Name}/{{.Check.Name}}")
-  -m, --message-template string     The template for the message sent to VictorOps (default "{{.Entity.Name}:{{.Check.Name}}:{{.Check.Output}}")
+  -e, --entity-id-template string   The template for the Entity ID sent to VictorOps (default "{{.Entity.Name}}/{{.Check.Name}}")
+  -m, --message-template string     The template for the message sent to VictorOps (default "{{.Entity.Name}}:{{.Check.Name}}:{{.Check.Output}}")
   -h, --help                        help for sensu-victorops-handler
 ```
 
